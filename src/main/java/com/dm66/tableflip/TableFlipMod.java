@@ -2,6 +2,7 @@ package com.dm66.tableflip;
 
 import com.dm66.tableflip.block.ModBlockEntityTypes;
 import com.dm66.tableflip.block.ModBlocks;
+import com.dm66.tableflip.block.renderer.DiceTableBlockEntityRenderer;
 import com.dm66.tableflip.item.ModItems;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -41,6 +43,7 @@ public class TableFlipMod
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::onRendererRegister);
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -63,6 +66,11 @@ public class TableFlipMod
     {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+    public void onRendererRegister(EntityRenderersEvent.RegisterRenderers event)
+    {
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.DICE_TABLE_BE.get(), DiceTableBlockEntityRenderer::new);
     }
 
 }
