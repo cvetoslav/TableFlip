@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "tableflip:block/dice_table" }
+  }
+}

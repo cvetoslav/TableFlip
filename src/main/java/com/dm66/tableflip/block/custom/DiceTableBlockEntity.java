@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -17,7 +18,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
 {
-    protected static final AnimationBuilder IDLE = new AnimationBuilder().addAnimation("gamba", ILoopType.EDefaultLoopTypes.LOOP);
+    protected static final AnimationBuilder IDLE = new AnimationBuilder().addAnimation("animation.dice_table.rng", ILoopType.EDefaultLoopTypes.LOOP);
 
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
@@ -26,10 +27,22 @@ public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
         super(ModBlockEntityTypes.DICE_TABLE_BE.get(), pos, state);
     }
 
+    private Vec3 last_loc = null;
+
+    public Vec3 getLastLoc()
+    {
+        return last_loc;
+    }
+
+    public void setLastLoc(Vec3 loc)
+    {
+        last_loc = loc;
+    }
+
     @Override
     public void registerControllers(final AnimationData data)
     {
-        data.addAnimationController(new AnimationController<>(this, "idle", 0, this::deployAnimController));
+        data.addAnimationController(new AnimationController<>(this, "Random", 0, this::deployAnimController));
     }
 
     protected <E extends DiceTableBlockEntity> PlayState deployAnimController(final AnimationEvent<E> event)
