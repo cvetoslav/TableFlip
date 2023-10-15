@@ -1,6 +1,8 @@
 package com.dm66.tableflip.block.custom;
 
 import com.dm66.tableflip.block.ModBlockEntityTypes;
+import com.dm66.tableflip.logic.GameState;
+import net.minecraft.client.Game;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -28,6 +30,11 @@ public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
     }
 
     private Vec3 last_loc = null;
+    private GameState state = null;
+
+    public GameState getGameState(){return state;}
+
+    public void setGameState(GameState state){this.state = state;}
 
     public Vec3 getLastLoc()
     {

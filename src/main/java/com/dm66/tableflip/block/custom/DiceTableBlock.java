@@ -1,5 +1,7 @@
 package com.dm66.tableflip.block.custom;
 
+import com.dm66.tableflip.logic.GameState;
+import com.dm66.tableflip.logic.GameType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -47,6 +49,8 @@ public class DiceTableBlock extends Block implements EntityBlock
             DiceTableBlockEntity be = (DiceTableBlockEntity) pLevel.getBlockEntity(pPos);
             assert be != null;
             be.setLastLoc(loc);
+
+            be.setGameState(GameState.init(GameType.BACKGAMMON_NORMAL));
 
             pPlayer.sendSystemMessage(Component.literal("Hit result: X" + loc.x + ", Y" + loc.y + " Z" + loc.z));
         }

@@ -3,6 +3,7 @@ package com.dm66.tableflip.block.renderer;
 import com.dm66.tableflip.TableFlipMod;
 import com.dm66.tableflip.block.custom.DiceTableBlockEntity;
 import com.dm66.tableflip.block.model.DiceTableBlockModel;
+import com.dm66.tableflip.logic.GameState;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,6 +21,10 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBlockEntity>
 {
     public DiceTableBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
@@ -31,7 +36,52 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
     {
         super.render(tile, partialTick, poseStack, bufferSource, packedLight);
         renderBoard(tile, partialTick, poseStack, bufferSource, packedLight);
-        renderPointerCube(tile, partialTick, poseStack, bufferSource, packedLight);
+        renderCheckers(tile, partialTick, poseStack, bufferSource, packedLight);
+        //renderPointerCube(tile, partialTick, poseStack, bufferSource, packedLight);
+    }
+
+    private void renderCheckers(DiceTableBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight)
+    {
+        GameState gs = tile.getGameState();
+        if(gs == null) return;
+
+        GeoModel model = modelProvider.getModel(new ResourceLocation(TableFlipMod.MOD_ID, "geo/checker.geo.json"));
+
+        /* Random bullshit go */
+        float[] rowX = {6.5f, 5.5f, 4.49f, 3.49f, 2.49f, 1.48f, -0.55f, -1.55f, -2.575f, -3.575f, -4.575f, -5.575f};
+        // upper row
+        for (int i=0; i<rowX.length; i++)
+        {
+            List<Boolean> list = gs.upperRow.get(i).stream().toList();
+            float y = 8.82f, z = 4.45f, delta = -0.875f;
+            for(Boolean checker : list)
+            {
+                model.getBone("pull").get().setPosition(-rowX[i] - 0.24f, y, z + 0.24f);
+                if(checker) doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), Color.BLACK, false);
+                else doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), false);
+                z += delta;
+            }
+        }
+
+        //lower row
+        for (int i=0; i<rowX.length; i++)
+        {
+            List<Boolean> list = gs.lowerRow.get(i).stream().toList();
+            float y = 8.82f, z = -4.9f, delta = +0.875f;
+            for(Boolean checker : list)
+            {
+                model.getBone("pull").get().setPosition(-rowX[i] - 0.24f, y, z + 0.24f);
+                if(checker) doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), Color.BLACK, false);
+                else doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), false);
+                z += delta;
+            }
+        }
+
+        /* Random bullshit stop */
+
+        //model.getBone("pull").get().setPosition(6.5f, 8.82f, 4.45f);
+        //doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), false);
+
     }
 
     private void renderPointerCube(DiceTableBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight)
