@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -76,6 +77,42 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
                 z += delta;
             }
         }
+
+        // middle bar
+        float x = 0.46f, y = 8.82f, z = -1.715f, delta = 0.25f;
+        for(int i=0; i<gs.knockedWhiteCount; i++)
+        {
+            model.getBone("pull").get().setPosition(-x - 0.24f, y, z + 0.24f);
+            doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), false);
+            y += delta;
+        }
+
+        x = 0.46f; y = 8.82f; z = 1.135f; delta = 0.25f;
+        for(int i=0; i<gs.knockedBlackCount; i++)
+        {
+            model.getBone("pull").get().setPosition(-x - 0.24f, y, z + 0.24f);
+            doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), Color.BLACK, false);
+            y += delta;
+        }
+
+        // side bar
+        x = -6.9f; y = 8.82f; z = -5.175f; delta = 0.25f;
+        model.getBone("pull").get().setRotation((float) (Math.PI / 2), 0, 0);
+        for(int i=0; i<gs.outWhiteCount; i++)
+        {
+            model.getBone("pull").get().setPosition(-x - 0.24f, y, z + 0.24f);
+            doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), false);
+            z += delta;
+        }
+
+        x = -6.9f; y = 8.82f; z = 4.7f; delta = -0.25f;
+        for(int i=0; i<gs.outBlackCount; i++)
+        {
+            model.getBone("pull").get().setPosition(-x - 0.24f, y, z + 0.24f);
+            doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, getTextureLocation(tile), Color.BLACK, false);
+            z += delta;
+        }
+        model.getBone("pull").get().setRotation(0, 0, 0);
 
         /* Random bullshit stop */
 

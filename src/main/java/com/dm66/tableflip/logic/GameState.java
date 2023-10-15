@@ -12,8 +12,10 @@ public class GameState
     // true -> white checker, false -> black checker
     public List< Stack<Boolean> > upperRow;
     public List< Stack<Boolean> > lowerRow;
-    public int knockedWhiteCount;
-    public int knockedBlackCount;
+    public int knockedWhiteCount = 256;
+    public int knockedBlackCount = 2;
+    public int outWhiteCount = 3;
+    public int outBlackCount = 4;
 
     public static GameState init(GameType type)
     {
@@ -21,7 +23,6 @@ public class GameState
         switch (type)
         {
             case BACKGAMMON_NORMAL -> {
-                // TODO: set initial placement for normal game
                 gs.upperRow = new ArrayList<>();
 
                 Stack<Boolean> st = new Stack<>();
