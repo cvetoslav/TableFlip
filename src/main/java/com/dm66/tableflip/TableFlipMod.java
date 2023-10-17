@@ -4,6 +4,7 @@ import com.dm66.tableflip.block.ModBlockEntityTypes;
 import com.dm66.tableflip.block.ModBlocks;
 import com.dm66.tableflip.block.renderer.DiceTableBlockEntityRenderer;
 import com.dm66.tableflip.item.ModItems;
+import com.dm66.tableflip.render.RenderUtil;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.BlockItem;
@@ -50,6 +51,7 @@ public class TableFlipMod
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntityTypes.register(modEventBus);
+        RenderUtil.register(modEventBus);
 
         GeckoLib.initialize();
 

@@ -4,16 +4,30 @@ import com.dm66.tableflip.TableFlipMod;
 import com.dm66.tableflip.block.custom.DiceTableBlockEntity;
 import com.dm66.tableflip.block.model.DiceTableBlockModel;
 import com.dm66.tableflip.logic.GameState;
+import com.dm66.tableflip.render.RenderUtil;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import net.minecraft.Util;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -21,6 +35,7 @@ import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.shadowed.eliotlash.mclib.math.functions.limit.Min;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +43,10 @@ import java.util.Stack;
 
 public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBlockEntity>
 {
+
+    /* Random bullshit go */
+    private static final float[] rowX = {6.5f, 5.5f, 4.49f, 3.49f, 2.49f, 1.48f, -0.55f, -1.55f, -2.575f, -3.575f, -4.575f, -5.575f};
+
     public DiceTableBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         super(context, new DiceTableBlockModel());
     }
@@ -39,6 +58,84 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
         renderBoard(tile, partialTick, poseStack, bufferSource, packedLight);
         renderCheckers(tile, partialTick, poseStack, bufferSource, packedLight);
         //renderPointerCube(tile, partialTick, poseStack, bufferSource, packedLight);
+        renderCringe(tile, poseStack, bufferSource);
+    }
+
+    private void renderCringe(DiceTableBlockEntity tile, PoseStack pose, MultiBufferSource bufferSource)
+    {
+        GameState gs = tile.getGameState();
+        BlockHitResult res = RenderUtil.getBlockLookingAt();
+        if(gs == null || res == null || res.getType() != HitResult.Type.BLOCK || res.getBlockPos().compareTo(tile.getBlockPos()) != 0) return;
+        Vec3 lastLookPos = res.getLocation().subtract(res.getBlockPos().getX(), res.getBlockPos().getY(), res.getBlockPos().getZ());
+
+        pose.pushPose();
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
+        float x = (float) lastLookPos.x, y = (float) lastLookPos.y, z = (float) lastLookPos.z;
+        x = 0.89625f; y = 0.55125f+0.01f; z = 0.549375f;
+        for(int i=0;i<12;i++)
+        {
+            if(gs.upperRow.get(i).empty()) continue;
+            int cnt = gs.upperRow.get(i).size() - 1;
+            x = (rowX[i] + 8f - 0.16f) / 16f;
+            z = (4.45f + 8f - 0.16f - cnt * 0.875f) / 16f;
+            renderAABB(pose, consumer, FastColor.ARGB32.color(255, 255, 0, 0), new AABB(x,y,z,x+0.05f,y+0.015f,z+0.05f));
+        }
+
+        for(int i=0;i<12;i++)
+        {
+            if(gs.lowerRow.get(i).empty()) continue;
+            int cnt = gs.lowerRow.get(i).size() - 1;
+            x = (rowX[i] + 8f - 0.16f) / 16f;
+            z = (-4.9f + 8f - 0.16f + cnt * 0.875f) / 16f;
+            renderAABB(pose, consumer, FastColor.ARGB32.color(255, 255, 0, 0), new AABB(x,y,z,x+0.05f,y+0.015f,z+0.05f));
+        }
+
+        pose.popPose();
+    }
+
+    private void renderAABB(PoseStack pose, VertexConsumer consumer, int color, AABB aabb)
+    {
+        PoseStack.Pose _pose = pose.last();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.minY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.minY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.minY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.maxY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.maxY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.maxY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.maxY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.minY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        // //
+
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.minY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.minY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.minY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.maxY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.maxY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.maxY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.maxY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.minY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        // //
+
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.minY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.minY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.minY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.minY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.maxY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.maxX, (float) aabb.maxY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.maxY, (float) aabb.minZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+        consumer.vertex(_pose.pose(), (float) aabb.minX, (float) aabb.maxY, (float) aabb.maxZ).color(color).normal(_pose.normal(), 0, 1, 0).endVertex();
+
     }
 
     private void renderCheckers(DiceTableBlockEntity tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight)
@@ -48,8 +145,6 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
 
         GeoModel model = modelProvider.getModel(new ResourceLocation(TableFlipMod.MOD_ID, "geo/checker.geo.json"));
 
-        /* Random bullshit go */
-        float[] rowX = {6.5f, 5.5f, 4.49f, 3.49f, 2.49f, 1.48f, -0.55f, -1.55f, -2.575f, -3.575f, -4.575f, -5.575f};
         // upper row
         for (int i=0; i<rowX.length; i++)
         {

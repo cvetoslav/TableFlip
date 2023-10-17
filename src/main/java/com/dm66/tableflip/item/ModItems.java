@@ -13,7 +13,7 @@ public class ModItems
 {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TableFlipMod.MOD_ID);
 
-    public static final RegistryObject<Item> DICE_TABLE_ITEM = ITEMS.register("dice_table_item", () -> new DiceTableBlockItem(ModBlocks.DICE_TABLE.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<Item> DICE_TABLE_ITEM = ITEMS.register("dice_table", () -> new DiceTableBlockItem(ModBlocks.DICE_TABLE.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public static void register(IEventBus eventBus)
     {

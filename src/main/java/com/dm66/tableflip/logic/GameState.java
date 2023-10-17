@@ -12,10 +12,10 @@ public class GameState
     // true -> white checker, false -> black checker
     public List< Stack<Boolean> > upperRow;
     public List< Stack<Boolean> > lowerRow;
-    public int knockedWhiteCount = 256;
-    public int knockedBlackCount = 2;
-    public int outWhiteCount = 3;
-    public int outBlackCount = 4;
+    public int knockedWhiteCount = 0;
+    public int knockedBlackCount = 0;
+    public int outWhiteCount = 0;
+    public int outBlackCount = 0;
 
     public static GameState init(GameType type)
     {
@@ -109,10 +109,50 @@ public class GameState
                 gs.lowerRow.add(st);
             }
             case BACKGAMMON_GUL_BARA -> {
-                // TODO: set initial placement for gul bara game
+                gs.upperRow = new ArrayList<>();
+                Stack<Boolean> st;
+                for(int i=0; i<11; i++)
+                {
+                    st = new Stack<>();
+                    gs.upperRow.add(st);
+                }
+                st = new Stack<>();
+                st.push(true); st.push(true);
+                gs.upperRow.add(st);
+
+                gs.lowerRow = new ArrayList<>();
+                st = new Stack<>();
+                st.push(false); st.push(false);
+                gs.lowerRow.add(st);
+                for(int i=0; i<11; i++)
+                {
+                    st = new Stack<>();
+                    gs.lowerRow.add(st);
+                }
+                gs.outBlackCount = gs.outWhiteCount = 13;
             }
             case BACKGAMMON_TAPA -> {
-                // TODO: set initial placement for tapa game
+                gs.upperRow = new ArrayList<>();
+                Stack<Boolean> st;
+                for(int i=0; i<11; i++)
+                {
+                    st = new Stack<>();
+                    gs.upperRow.add(st);
+                }
+                st = new Stack<>();
+                st.push(true); st.push(true);
+                gs.upperRow.add(st);
+
+                gs.lowerRow = new ArrayList<>();
+                for(int i=0; i<11; i++)
+                {
+                    st = new Stack<>();
+                    gs.lowerRow.add(st);
+                }
+                st = new Stack<>();
+                st.push(false); st.push(false);
+                gs.lowerRow.add(st);
+                gs.outBlackCount = gs.outWhiteCount = 13;
             }
         }
         return gs;
