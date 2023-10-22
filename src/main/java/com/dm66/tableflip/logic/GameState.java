@@ -9,7 +9,7 @@ public class GameState
     // Backgammon game state class
 
     // Upper and lower row of stacks (from white-player POV)
-    // true -> white checker, false -> black checker
+    // false -> white checker, true -> black checker
     public List< Stack<Boolean> > upperRow;
     public List< Stack<Boolean> > lowerRow;
     public int knockedWhiteCount = 0;

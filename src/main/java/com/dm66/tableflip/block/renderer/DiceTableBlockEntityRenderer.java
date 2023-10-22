@@ -66,29 +66,10 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
         GameState gs = tile.getGameState();
         BlockHitResult res = RenderUtil.getBlockLookingAt();
         if(gs == null || res == null || res.getType() != HitResult.Type.BLOCK || res.getBlockPos().compareTo(tile.getBlockPos()) != 0) return;
-        Vec3 lastLookPos = res.getLocation().subtract(res.getBlockPos().getX(), res.getBlockPos().getY(), res.getBlockPos().getZ());
 
         pose.pushPose();
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.lines());
-        float x = (float) lastLookPos.x, y = (float) lastLookPos.y, z = (float) lastLookPos.z;
-        x = 0.89625f; y = 0.55125f+0.01f; z = 0.549375f;
-        for(int i=0;i<12;i++)
-        {
-            if(gs.upperRow.get(i).empty()) continue;
-            int cnt = gs.upperRow.get(i).size() - 1;
-            x = (rowX[i] + 8f - 0.16f) / 16f;
-            z = (4.45f + 8f - 0.16f - cnt * 0.875f) / 16f;
-            renderAABB(pose, consumer, FastColor.ARGB32.color(255, 255, 0, 0), new AABB(x,y,z,x+0.05f,y+0.015f,z+0.05f));
-        }
-
-        for(int i=0;i<12;i++)
-        {
-            if(gs.lowerRow.get(i).empty()) continue;
-            int cnt = gs.lowerRow.get(i).size() - 1;
-            x = (rowX[i] + 8f - 0.16f) / 16f;
-            z = (-4.9f + 8f - 0.16f + cnt * 0.875f) / 16f;
-            renderAABB(pose, consumer, FastColor.ARGB32.color(255, 255, 0, 0), new AABB(x,y,z,x+0.05f,y+0.015f,z+0.05f));
-        }
+        renderHoveredStack(gs, pose, consumer);
 
         pose.popPose();
     }
@@ -190,7 +171,7 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
             y += delta;
         }
 
-        // side bar
+        // sidebar
         x = -6.9f; y = 8.82f; z = -5.175f; delta = 0.25f;
         model.getBone("pull").get().setRotation((float) (Math.PI / 2), 0, 0);
         for(int i=0; i<gs.outWhiteCount; i++)
@@ -233,6 +214,50 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
         ResourceLocation texture = new ResourceLocation(TableFlipMod.MOD_ID, "textures/block/dice_table_board.png");
 
         doRenderingStuff(tile, partialTick, poseStack, bufferSource, packedLight, model, texture, true);
+    }
+
+    private int getHoveredStack(Vec3 lookPos)
+    {
+        for(int i=0;i<12;i++)
+        {
+            float x1 = (rowX[i] + 8f - 0.16f) / 16f;
+            float z1 = (4.45f + 8f - 0.16f - 5 * 0.875f) / 16f;
+            float x2 = x1 + 0.05f;
+            float z2 = (4.45f + 8f - 0.16f) / 16f + 0.05f;
+            if(x1 <= lookPos.x && lookPos.x <= x2 && z1 <= lookPos.z && lookPos.z <= z2) return i;
+
+            z1 = (-4.9f + 8f - 0.16f) / 16f;
+            z2 = (-4.9f + 8f - 0.16f + 5 * 0.875f) / 16f + 0.05f;
+            if(x1 <= lookPos.x && lookPos.x <= x2 && z1 <= lookPos.z && lookPos.z <= z2) return i + 12;
+        }
+
+        return -1;
+    }
+
+    private void renderHoveredStack(GameState gs, PoseStack pose, VertexConsumer consumer)
+    {
+        float x,y,z;
+        y = 0.55125f+0.01f;
+        BlockHitResult res = RenderUtil.getBlockLookingAt();
+        Vec3 lastLookPos = res.getLocation().subtract(res.getBlockPos().getX(), res.getBlockPos().getY(), res.getBlockPos().getZ());
+        int ind = getHoveredStack(lastLookPos);
+        if(ind >= 0 && ind < 12)
+        {
+            if(gs.upperRow.get(ind).empty()) return;
+            int cnt = gs.upperRow.get(ind).size() - 1;
+            x = (rowX[ind] + 8f - 0.16f) / 16f;
+            z = (4.45f + 8f - 0.16f - cnt * 0.875f) / 16f;
+            renderAABB(pose, consumer, FastColor.ARGB32.color(255, 255, 0, 0), new AABB(x,y,z,x+0.05f,y+0.015f,z+0.05f));
+        }
+        else if(ind >= 12)
+        {
+            int i = ind-12;
+            if(gs.lowerRow.get(i).empty()) return;
+            int cnt = gs.lowerRow.get(i).size() - 1;
+            x = (rowX[i] + 8f - 0.16f) / 16f;
+            z = (-4.9f + 8f - 0.16f + cnt * 0.875f) / 16f;
+            renderAABB(pose, consumer, FastColor.ARGB32.color(255, 255, 0, 0), new AABB(x,y,z,x+0.05f,y+0.015f,z+0.05f));
+        }
     }
 
     private void doRenderingStuff(DiceTableBlockEntity tile, float partialTick, PoseStack pPoseStack, MultiBufferSource bufferSource, int packedLight, GeoModel pModel, ResourceLocation pTexture, boolean hasTexture)
