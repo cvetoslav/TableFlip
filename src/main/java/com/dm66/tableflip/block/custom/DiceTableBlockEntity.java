@@ -20,18 +20,23 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
 {
+    // ## GeckoLib animation stuff ##
     protected static final AnimationBuilder IDLE = new AnimationBuilder().addAnimation("animation.dice_table.rng", ILoopType.EDefaultLoopTypes.LOOP);
-
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+
+    // ## BlockEntity Data ##
+    // [unused] Last click location, used for rendering debugging (doesn't belong here)
+    private Vec3 last_loc = null;
+
+    // Game state
+    private GameState state = null;
 
     public DiceTableBlockEntity(BlockPos pos, BlockState state)
     {
         super(ModBlockEntityTypes.DICE_TABLE_BE.get(), pos, state);
     }
 
-    private Vec3 last_loc = null;
-    private GameState state = null;
-
+    // ## Field access modifiers ##
     public GameState getGameState(){return state;}
 
     public void setGameState(GameState state){this.state = state;}

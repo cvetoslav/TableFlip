@@ -7,14 +7,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+@OnlyIn(Dist.CLIENT)
 public class RenderUtil
 {
-    private static double RTLastUpdateTime = Double.MIN_VALUE;
+    private static long RTLastUpdateTime = 0;
     private static BlockHitResult RTBlockLooking = null;
 
     public static void register(IEventBus bus)
@@ -28,8 +31,8 @@ public class RenderUtil
     {
         if(event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS)
         {
-            double d0 = (double) Util.getNanos();
-            if (d0 - RTLastUpdateTime > 1.0E8D)
+            long d0 = Util.getNanos();
+            if (d0 - RTLastUpdateTime > 100000000) // 10^8 ns = 0.1 s
             {
                 RTLastUpdateTime = d0;
                 Camera cam = event.getCamera();

@@ -29,7 +29,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -281,7 +280,7 @@ public class DiceTableBlockEntityRenderer extends GeoBlockRenderer<DiceTableBloc
     }
 
     @Override
-    public RenderType getRenderType(DiceTableBlockEntity animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight, ResourceLocation texture)
+    public RenderType getRenderType(DiceTableBlockEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, ResourceLocation texture)
     {
         return RenderType.entityTranslucent(getTextureLocation(animatable));
     }

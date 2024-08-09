@@ -7,6 +7,7 @@ import java.util.Stack;
 public class GameState
 {
     // Backgammon game state class
+    // TODO: rename class and/or create interface common for different game types
 
     // Upper and lower row of stacks (from white-player POV)
     // false -> white checker, true -> black checker
@@ -129,7 +130,7 @@ public class GameState
                     st = new Stack<>();
                     gs.lowerRow.add(st);
                 }
-                gs.outBlackCount = gs.outWhiteCount = 13;
+                gs.knockedWhiteCount = gs.knockedBlackCount = 13;
             }
             case BACKGAMMON_TAPA -> {
                 gs.upperRow = new ArrayList<>();
@@ -152,9 +153,21 @@ public class GameState
                 st = new Stack<>();
                 st.push(false); st.push(false);
                 gs.lowerRow.add(st);
-                gs.outBlackCount = gs.outWhiteCount = 13;
+                gs.knockedWhiteCount = gs.knockedBlackCount = 13;
             }
         }
         return gs;
+    }
+
+
+    // TODO: (de)serialization - implement GameState-specific data serialization
+    public byte[] serialize()
+    {
+        return new byte[1];
+    }
+
+    public static GameState reconstruct(byte[] serial)
+    {
+        return init(GameType.BACKGAMMON_NORMAL);
     }
 }

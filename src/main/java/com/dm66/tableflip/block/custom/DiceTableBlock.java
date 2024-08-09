@@ -2,6 +2,8 @@ package com.dm66.tableflip.block.custom;
 
 import com.dm66.tableflip.logic.GameState;
 import com.dm66.tableflip.logic.GameType;
+import com.dm66.tableflip.networking.GameStatePacket;
+import com.dm66.tableflip.networking.Networking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,10 +40,12 @@ public class DiceTableBlock extends Block implements EntityBlock
         super(pProperties);
     }
 
+    // Table Block right click method
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit)
     {
-        if(pLevel.isClientSide())
+        // Execute only on logical server
+        if(!pLevel.isClientSide())
         {
             Vec3 loc = pHit.getLocation();
             loc = loc.add(-pPos.getX(), -pPos.getY(), -pPos.getZ());
@@ -52,7 +56,7 @@ public class DiceTableBlock extends Block implements EntityBlock
 
             be.setGameState(GameState.init(GameType.BACKGAMMON_NORMAL));
 
-            pPlayer.sendSystemMessage(Component.literal("Hit result: X" + loc.x + ", Y" + loc.y + " Z" + loc.z));
+            Networking.sendToAllClients(new GameStatePacket(pPos, be.getGameState()));
         }
         return InteractionResult.CONSUME;
     }
