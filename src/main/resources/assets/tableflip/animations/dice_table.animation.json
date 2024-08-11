@@ -20,7 +20,7 @@
 		"animation.dice_table.gamba": {
 			"animation_length": 3,
 			"bones": {
-				"dice2": {
+				"dice1": {
 					"rotation": {
 						"vector": ["query.roll_x + math.max(-360,-360*query.anim_time/query.t4)", 0, "query.roll_z + math.max(-360,-360*query.anim_time/query.t4)"]
 					},
@@ -29,6 +29,18 @@
 							"(query.v1_x*query.anim_time/query.t1)*math.min(1,math.floor(query.t1/query.anim_time)) + (query.v1_x + query.v2_x*(query.anim_time-query.t1)/(query.t2-query.t1))*math.min(1,math.floor(query.anim_time/query.t1))*math.min(1,math.floor(query.t2/query.anim_time)) + (query.v1_x + query.v2_x + query.v3_x*(query.anim_time-query.t2)/(query.t3-query.t2))*math.min(1,math.floor(query.anim_time/query.t2))*math.min(1,math.floor(query.t3/query.anim_time)) + (query.v1_x + query.v2_x + query.v3_x + query.v4_x*(query.anim_time-query.t3)/(query.t4-query.t3))*math.min(1,math.floor(query.anim_time/query.t3))*math.min(1,math.floor(query.t4/query.anim_time)) + (query.v1_x + query.v2_x + query.v3_x + query.v4_x)*math.min(1,math.floor(query.anim_time/query.t4))",
 							"16*((query.h-0.5*query.g*math.pow(query.anim_time,2))*math.min(1,math.floor(query.t1/query.anim_time)) + (math.pow(query.k,2)*query.h-0.5*query.g*math.pow(query.anim_time-(query.t1+query.t2)/2,2))*math.min(1,math.floor(query.anim_time/query.t1))*math.min(1,math.floor(query.t2/query.anim_time)) + (math.pow(query.k,4)*query.h-0.5*query.g*math.pow(query.anim_time-(query.t2+query.t3)/2,2))*math.min(1,math.floor(query.anim_time/query.t2))*math.min(1,math.floor(query.t3/query.anim_time)) + (math.pow(query.k,6)*query.h-0.5*query.g*math.pow(query.anim_time-(query.t3+query.t4)/2,2))*math.min(1,math.floor(query.anim_time/query.t3))*math.min(1,math.floor(query.t4/query.anim_time)))",
 							"(query.v1_z*query.anim_time/query.t1)*math.min(1,math.floor(query.t1/query.anim_time)) + (query.v1_z + query.v2_z*(query.anim_time-query.t1)/(query.t2-query.t1))*math.min(1,math.floor(query.anim_time/query.t1))*math.min(1,math.floor(query.t2/query.anim_time)) + (query.v1_z + query.v2_z + query.v3_z*(query.anim_time-query.t2)/(query.t3-query.t2))*math.min(1,math.floor(query.anim_time/query.t2))*math.min(1,math.floor(query.t3/query.anim_time)) + (query.v1_z + query.v2_z + query.v3_z + query.v4_z*(query.anim_time-query.t3)/(query.t4-query.t3))*math.min(1,math.floor(query.anim_time/query.t3))*math.min(1,math.floor(query.t4/query.anim_time)) + (query.v1_z + query.v2_z + query.v3_z + query.v4_z)*math.min(1,math.floor(query.anim_time/query.t4))"
+						]
+					}
+				},
+				"dice2": {
+					"rotation": {
+						"vector": ["query.roll2_x + math.max(-360,-360*query.anim_time/query.t4)", 0, "query.roll2_z + math.max(-360,-360*query.anim_time/query.t4)"]
+					},
+					"position": {
+						"vector": [
+							"(query.v1_2_x*query.anim_time/query.t1)*math.min(1,math.floor(query.t1/query.anim_time)) + (query.v1_2_x + query.v2_2_x*(query.anim_time-query.t1)/(query.t2-query.t1))*math.min(1,math.floor(query.anim_time/query.t1))*math.min(1,math.floor(query.t2/query.anim_time)) + (query.v1_2_x + query.v2_2_x + query.v3_2_x*(query.anim_time-query.t2)/(query.t3-query.t2))*math.min(1,math.floor(query.anim_time/query.t2))*math.min(1,math.floor(query.t3/query.anim_time)) + (query.v1_2_x + query.v2_2_x + query.v3_2_x + query.v4_2_x*(query.anim_time-query.t3)/(query.t4-query.t3))*math.min(1,math.floor(query.anim_time/query.t3))*math.min(1,math.floor(query.t4/query.anim_time)) + (query.v1_2_x + query.v2_2_x + query.v3_2_x + query.v4_2_x)*math.min(1,math.floor(query.anim_time/query.t4))",
+							"16*((query.h-0.5*query.g*math.pow(query.anim_time,2))*math.min(1,math.floor(query.t1/query.anim_time)) + (math.pow(query.k,2)*query.h-0.5*query.g*math.pow(query.anim_time-(query.t1+query.t2)/2,2))*math.min(1,math.floor(query.anim_time/query.t1))*math.min(1,math.floor(query.t2/query.anim_time)) + (math.pow(query.k,4)*query.h-0.5*query.g*math.pow(query.anim_time-(query.t2+query.t3)/2,2))*math.min(1,math.floor(query.anim_time/query.t2))*math.min(1,math.floor(query.t3/query.anim_time)) + (math.pow(query.k,6)*query.h-0.5*query.g*math.pow(query.anim_time-(query.t3+query.t4)/2,2))*math.min(1,math.floor(query.anim_time/query.t3))*math.min(1,math.floor(query.t4/query.anim_time)))",
+							"(query.v1_2_z*query.anim_time/query.t1)*math.min(1,math.floor(query.t1/query.anim_time)) + (query.v1_2_z + query.v2_2_z*(query.anim_time-query.t1)/(query.t2-query.t1))*math.min(1,math.floor(query.anim_time/query.t1))*math.min(1,math.floor(query.t2/query.anim_time)) + (query.v1_2_z + query.v2_2_z + query.v3_2_z*(query.anim_time-query.t2)/(query.t3-query.t2))*math.min(1,math.floor(query.anim_time/query.t2))*math.min(1,math.floor(query.t3/query.anim_time)) + (query.v1_2_z + query.v2_2_z + query.v3_2_z + query.v4_2_z*(query.anim_time-query.t3)/(query.t4-query.t3))*math.min(1,math.floor(query.anim_time/query.t3))*math.min(1,math.floor(query.t4/query.anim_time)) + (query.v1_2_z + query.v2_2_z + query.v3_2_z + query.v4_2_z)*math.min(1,math.floor(query.anim_time/query.t4))"
 						]
 					}
 				}

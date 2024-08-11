@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -23,6 +24,9 @@ import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
@@ -87,15 +91,26 @@ public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
 
             Random rng = new Random();
             int dice_roll = rng.nextInt(1, 7);  // Simulate random dice roll; TODO: sync that with GS
-            double rollx = 0, rollz = 0;
+            double roll1x = 0, roll1z = 0;
             switch (dice_roll)
             {
-                case 1 -> rollx = rollz = 0;
-                case 2 -> rollz = 90;
-                case 3 -> rollx = -90;
-                case 4 -> rollx = 90;
-                case 5 -> rollz = -90;
-                case 6 -> rollz = 180;
+                case 1 -> roll1x = roll1z = 0;
+                case 2 -> roll1z = 90;
+                case 3 -> roll1x = -90;
+                case 4 -> roll1x = 90;
+                case 5 -> roll1z = -90;
+                case 6 -> roll1z = 180;
+            }
+            dice_roll = rng.nextInt(1, 7);
+            double roll2x = 0, roll2z = 0;
+            switch (dice_roll)
+            {
+                case 1 -> roll2x = roll2z = 0;
+                case 2 -> roll2z = 90;
+                case 3 -> roll2x = -90;
+                case 4 -> roll2x = 90;
+                case 5 -> roll2z = -90;
+                case 6 -> roll2z = 180;
             }
 
             parser.setValue("query.h", h);
@@ -108,17 +123,41 @@ public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
 
             // TODO: Hmm, seems like the dice fell off the table. Whadowedo?
             // also, add 'sidedness' calculation for player's POV
-            parser.setValue("query.v1_x", -rng.nextDouble(3,5));
-            parser.setValue("query.v1_z", 0);
-            parser.setValue("query.v2_x", -rng.nextDouble(0.5, 4));
-            parser.setValue("query.v2_z", rng.nextDouble(-3,3));
-            parser.setValue("query.v3_x", -rng.nextDouble(0.5, 3));
-            parser.setValue("query.v3_z", rng.nextDouble(-3,3));
-            parser.setValue("query.v4_x", -rng.nextDouble(0.5, 2));
-            parser.setValue("query.v4_z", rng.nextDouble(-2,2));
+            List<Double> p1, p2;
+            do
+            {
+                p1 = generateDicePath(rng);
+                p2 = generateDicePath(rng);
+                double d1_x = p1.get(0) + p1.get(2) + p1.get(4) + p1.get(6);
+                double d1_z = p1.get(1) + p1.get(3) + p1.get(5) + p1.get(7);
+                double d2_x = p2.get(0) + p2.get(2) + p2.get(4) + p2.get(6);
+                double d2_z = p2.get(1) + p2.get(3) + p2.get(5) + p2.get(7) + 2;
+                double dist_sqr = (d1_x - d2_x) * (d1_x - d2_x) + (d1_z - d2_z) * (d1_z - d2_z);
+                if(dist_sqr >= 2) break;
+            }while (true);
 
-            parser.setValue("query.roll_x", rollx);
-            parser.setValue("query.roll_z", rollz);
+            parser.setValue("query.v1_x", p1.get(0));
+            parser.setValue("query.v1_z", p1.get(1));
+            parser.setValue("query.v2_x", p1.get(2));
+            parser.setValue("query.v2_z", p1.get(3));
+            parser.setValue("query.v3_x", p1.get(4));
+            parser.setValue("query.v3_z", p1.get(5));
+            parser.setValue("query.v4_x", p1.get(6));
+            parser.setValue("query.v4_z", p1.get(7));
+
+            parser.setValue("query.v1_2_x", p2.get(0));
+            parser.setValue("query.v1_2_z", p2.get(1));
+            parser.setValue("query.v2_2_x", p2.get(2));
+            parser.setValue("query.v2_2_z", p2.get(3));
+            parser.setValue("query.v3_2_x", p2.get(4));
+            parser.setValue("query.v3_2_z", p2.get(5));
+            parser.setValue("query.v4_2_x", p2.get(6));
+            parser.setValue("query.v4_2_z", p2.get(7));
+
+            parser.setValue("query.roll_x", roll1x);
+            parser.setValue("query.roll_z", roll1z);
+            parser.setValue("query.roll2_x", roll2x);
+            parser.setValue("query.roll2_z", roll2z);
 
             event.getController().setAnimation(GAMBA);
             event.getController().markNeedsReload();
@@ -127,6 +166,12 @@ public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
         else if(roll) roll = false;  // Don't allow player to reroll the dice while in animation
 
         return PlayState.CONTINUE;
+    }
+
+    // Helper method
+    private List<Double> generateDicePath(Random rng)
+    {
+        return List.of(-rng.nextDouble(3,5), 0d, -rng.nextDouble(0.5, 4), rng.nextDouble(-3,3), -rng.nextDouble(0.5, 3), rng.nextDouble(-3,3), -rng.nextDouble(0.5, 2), rng.nextDouble(-2,2));
     }
 
     @Override
