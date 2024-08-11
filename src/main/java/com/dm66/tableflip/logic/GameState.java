@@ -1,5 +1,9 @@
 package com.dm66.tableflip.logic;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -17,6 +21,7 @@ public class GameState
     public int knockedBlackCount = 0;
     public int outWhiteCount = 0;
     public int outBlackCount = 0;
+    public int selectedChecker = 0;
 
     public static GameState init(GameType type)
     {
@@ -157,6 +162,11 @@ public class GameState
             }
         }
         return gs;
+    }
+
+    public void onRightClick(Vec3 clickPos, Player player)
+    {
+
     }
 
 

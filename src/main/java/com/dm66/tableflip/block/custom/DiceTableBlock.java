@@ -45,22 +45,28 @@ public class DiceTableBlock extends Block implements EntityBlock
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit)
     {
         // Execute only on logical server
-        if(!pLevel.isClientSide())
+//        if(!pLevel.isClientSide())
+//        {
+//            Vec3 loc = pHit.getLocation();
+//            loc = loc.add(-pPos.getX(), -pPos.getY(), -pPos.getZ());
+//
+//            DiceTableBlockEntity be = (DiceTableBlockEntity) pLevel.getBlockEntity(pPos);
+//            assert be != null;
+//            be.setLastLoc(loc);
+//
+//            be.setGameState(GameState.init(GameType.BACKGAMMON_NORMAL));
+//
+//            Networking.sendToAllClients(new GameStatePacket(pPos, be.getGameState()));
+//        }
+        if(pLevel.isClientSide())
         {
-            Vec3 loc = pHit.getLocation();
-            loc = loc.add(-pPos.getX(), -pPos.getY(), -pPos.getZ());
-
             DiceTableBlockEntity be = (DiceTableBlockEntity) pLevel.getBlockEntity(pPos);
-            assert be != null;
-            be.setLastLoc(loc);
-
-            be.setGameState(GameState.init(GameType.BACKGAMMON_NORMAL));
-
-            Networking.sendToAllClients(new GameStatePacket(pPos, be.getGameState()));
+            be.roll = true;
         }
         return InteractionResult.CONSUME;
     }
 
+    // hitbox definition
     private static final VoxelShape shape = Stream.of(
             Block.box(0, 8, 0, 16, 9, 16),
             Block.box(1, 0, 14, 2, 8, 15),

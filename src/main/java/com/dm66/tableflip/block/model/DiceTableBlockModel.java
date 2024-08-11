@@ -4,7 +4,10 @@ import com.dm66.tableflip.TableFlipMod;
 import com.dm66.tableflip.block.custom.DiceTableBlock;
 import com.dm66.tableflip.block.custom.DiceTableBlockEntity;
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.resource.GeckoLibCache;
 
 public class DiceTableBlockModel extends AnimatedGeoModel<DiceTableBlockEntity>
 {
@@ -26,4 +29,5 @@ public class DiceTableBlockModel extends AnimatedGeoModel<DiceTableBlockEntity>
     public ResourceLocation getAnimationResource(DiceTableBlockEntity object) {
         return animationResource;
     }
+
 }
