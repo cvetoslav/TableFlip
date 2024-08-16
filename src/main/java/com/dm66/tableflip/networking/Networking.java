@@ -19,7 +19,8 @@ public class Networking
 
     public static void registerMessages()
     {
-        INSTANCE.registerMessage(ID++, GameStatePacket.class, GameStatePacket::encode, GameStatePacket::new, GameStatePacket::handle);
+        INSTANCE.registerMessage(ID++, S2C_GameStatePacket.class, S2C_GameStatePacket::encode, S2C_GameStatePacket::new, S2C_GameStatePacket::handle);
+        INSTANCE.registerMessage(ID++, C2S_RequestGameStatePacket.class, C2S_RequestGameStatePacket::encode, C2S_RequestGameStatePacket::new, C2S_RequestGameStatePacket::handle);
     }
 
     public static void sendToServer(Object packet)

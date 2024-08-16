@@ -11,18 +11,18 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class GameStatePacket
+public class S2C_GameStatePacket
 {
     BlockPos pos;
     GameState gs;
 
-    public GameStatePacket(FriendlyByteBuf buffer)
+    public S2C_GameStatePacket(FriendlyByteBuf buffer)
     {
         pos = buffer.readBlockPos();
         gs = GameState.reconstruct(buffer.readByteArray());
     }
 
-    public GameStatePacket(BlockPos BEpos, GameState state)
+    public S2C_GameStatePacket(BlockPos BEpos, GameState state)
     {
         pos = BEpos;
         gs = state;
@@ -45,7 +45,7 @@ public class GameStatePacket
 
     private static class ClientPacketHandlerClass
     {
-        public static void handlePacket(GameStatePacket p, Supplier<NetworkEvent.Context> ctx)
+        public static void handlePacket(S2C_GameStatePacket p, Supplier<NetworkEvent.Context> ctx)
         {
             assert Minecraft.getInstance().level != null;
             DiceTableBlockEntity be = (DiceTableBlockEntity) Minecraft.getInstance().level.getBlockEntity(p.pos);

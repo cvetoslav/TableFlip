@@ -164,12 +164,6 @@ public class GameState
         return gs;
     }
 
-    public void onRightClick(Vec3 clickPos, Player player)
-    {
-
-    }
-
-
     // TODO: (de)serialization - implement GameState-specific data serialization
     public byte[] serialize()
     {
