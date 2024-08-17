@@ -5,9 +5,11 @@ import com.dm66.tableflip.logic.GameState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
+import software.bernie.shadowed.eliotlash.mclib.math.functions.limit.Min;
 
 import java.util.function.Supplier;
 
@@ -19,7 +21,7 @@ public class S2C_GameStatePacket
     public S2C_GameStatePacket(FriendlyByteBuf buffer)
     {
         pos = buffer.readBlockPos();
-        gs = GameState.reconstruct(buffer.readByteArray());
+        gs = GameState.reconstruct(buffer);
     }
 
     public S2C_GameStatePacket(BlockPos BEpos, GameState state)
@@ -31,7 +33,7 @@ public class S2C_GameStatePacket
     public void encode(FriendlyByteBuf buffer)
     {
         buffer.writeBlockPos(pos);
-        buffer.writeBytes(gs.serialize());
+        gs.serialize(buffer);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx)
@@ -52,6 +54,7 @@ public class S2C_GameStatePacket
             if(be != null)
             {
                 be.setGameState(p.gs);
+                Minecraft.getInstance().player.sendSystemMessage(Component.literal("state set!"));
             }
         }
     }

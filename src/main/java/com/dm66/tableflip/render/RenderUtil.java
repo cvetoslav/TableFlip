@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -49,5 +50,26 @@ public class RenderUtil
     public static BlockHitResult getBlockLookingAt()
     {
         return RTBlockLooking;
+    }
+
+
+    public static final float[] rowX = {6.5f, 5.5f, 4.49f, 3.49f, 2.49f, 1.48f, -0.55f, -1.55f, -2.575f, -3.575f, -4.575f, -5.575f};
+
+    public static int getHoveredStack(Vec3 lookPos)
+    {
+        for(int i=0;i<12;i++)
+        {
+            float x1 = (rowX[i] + 8f - 0.16f) / 16f;
+            float z1 = (4.45f + 8f - 0.16f - 5 * 0.875f) / 16f;
+            float x2 = x1 + 0.05f;
+            float z2 = (4.45f + 8f - 0.16f) / 16f + 0.05f;
+            if(x1 <= lookPos.x && lookPos.x <= x2 && z1 <= lookPos.z && lookPos.z <= z2) return i;
+
+            z1 = (-4.9f + 8f - 0.16f) / 16f;
+            z2 = (-4.9f + 8f - 0.16f + 5 * 0.875f) / 16f + 0.05f;
+            if(x1 <= lookPos.x && lookPos.x <= x2 && z1 <= lookPos.z && lookPos.z <= z2) return i + 12;
+        }
+
+        return -1;
     }
 }

@@ -36,9 +36,13 @@ public class DiceTableBlockEntity extends BlockEntity implements IAnimatable
     protected static final AnimationBuilder GAMBA = new AnimationBuilder().addAnimation("animation.dice_table.gamba", ILoopType.EDefaultLoopTypes.HOLD_ON_LAST_FRAME);
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
+
     // ## BlockEntity Data ##
     // [unused] Last click location, used for rendering debugging (doesn't belong here)
     private Vec3 last_loc = null;
+
+    // Client side stuff - handling checker selection
+    public int sel1 = -1, sel2 = -1;
 
     // Game state
     private GameState state = null;

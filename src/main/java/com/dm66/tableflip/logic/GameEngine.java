@@ -7,7 +7,8 @@ public interface GameEngine
 {
     static boolean isValidMove(GameState gs, Move move)
     {
-        return true;
+        if(move.initialPosition < 12) return gs.upperRow.get(move.initialPosition).size() > 0;
+        return gs.lowerRow.get(move.initialPosition - 12).size() > 0;
     }
 
     static List<Move> getValidMoves(GameState gs)

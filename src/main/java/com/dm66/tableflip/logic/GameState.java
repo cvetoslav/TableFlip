@@ -1,9 +1,11 @@
 package com.dm66.tableflip.logic;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -21,7 +23,6 @@ public class GameState
     public int knockedBlackCount = 0;
     public int outWhiteCount = 0;
     public int outBlackCount = 0;
-    public int selectedChecker = 0;
 
     public static GameState init(GameType type)
     {
@@ -165,13 +166,44 @@ public class GameState
     }
 
     // TODO: (de)serialization - implement GameState-specific data serialization
-    public byte[] serialize()
+    public void serialize(FriendlyByteBuf buf)
     {
-        return new byte[1];
+        for(Stack<Boolean> s : this.upperRow)
+        {
+            int x = 1;
+            Stack<Boolean> _s = (Stack<Boolean>) s.clone();
+            while(_s.size() > 0) x = x*2 + (_s.pop() ? 1 : 0);
+            buf.writeInt(x);
+        }
+        for(Stack<Boolean> s : this.lowerRow)
+        {
+            int x = 1;
+            Stack<Boolean> _s = (Stack<Boolean>) s.clone();
+            while(_s.size() > 0) x = x*2 + (_s.pop() ? 1 : 0);
+            buf.writeInt(x);
+        }
     }
 
-    public static GameState reconstruct(byte[] serial)
+    public static GameState reconstruct(FriendlyByteBuf buf)
     {
-        return init(GameType.BACKGAMMON_NORMAL);
+        //return init(GameType.BACKGAMMON_NORMAL);
+        GameState gs = new GameState();
+        gs.upperRow = new ArrayList<>();
+        for(int i = 0; i < 12; i++)
+        {
+            Stack<Boolean> s = new Stack<>();
+            int x = buf.readInt();
+            while(x>1){s.push(x % 2 == 1); x/=2;}
+            gs.upperRow.add(s);
+        }
+        gs.lowerRow = new ArrayList<>();
+        for(int i = 0; i < 12; i++)
+        {
+            Stack<Boolean> s = new Stack<>();
+            int x = buf.readInt();
+            while(x>1){s.push(x % 2 == 1); x/=2;}
+            gs.lowerRow.add(s);
+        }
+        return gs;
     }
 }
